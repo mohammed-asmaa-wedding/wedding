@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+  <title>دعوة زفاف | محمد &amp; أسماء</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              200: '#faeec7',
+              300: '#f5df96',
+              400: '#d4af37',
+              500: '#b89025',
+              600: '#947219',
+            },
+            luxury: {
+              dark: '#1f140a',
+              brown: '#3d2b19',
+              lightBrown: '#7d5e3f',
+              bg: '#fcf8f2',
+            }
+          },
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+            amiri: ['Amiri', 'serif'],
+            cursive: ['Great Vibes', 'cursive'],
+            serif: ['Playfair Display', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800;900&family=Great+Vibes&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+    .font-cursive { font-family: 'Great Vibes', cursive; }
+    .font-amiri { font-family: 'Amiri', serif; }
+    
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ستارة الفتح والختم */
+    .door-left { transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.8s ease; }
+    .door-right { transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.8s ease; }
+    
+    .envelope-open .door-left { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+    .envelope-open .door-right { transform: translateX(100%); opacity: 0; pointer-events: none; }
+    
+    .envelope-open #sealBtn, .envelope-open #sealHint {
+      opacity: 0 !important;
+      transform: scale(0.6) translateY(20px) !important;
+      pointer-events: none;
+      transition: all 0.6s ease;
+    }
+    .envelope-open #envelopeOverlay { pointer-events: none; opacity: 0; transition: opacity 0.5s ease 1s; }
+
+    /* تأثير البلور وزووم الواجهة السينمائي */
+    #heroMedia {
+      filter: blur(25px) brightness(0.8);
+      transform: scale(1.15);
+      opacity: 0.6;
+      transition: filter 2.5s cubic-bezier(0.25, 1, 0.5, 1), 
+                  transform 2.5s cubic-bezier(0.25, 1, 0.5, 1), 
+                  opacity 2.5s ease;
+      will-change: filter, transform, opacity;
+    }
+
+    #heroTitles {
+      opacity: 0;
+      transform: translateY(35px) scale(0.92);
+      filter: blur(12px);
+      transition: all 2.2s cubic-bezier(0.25, 1, 0.5, 1) 0.3s;
+    }
+
+    .envelope-open #heroMedia {
+      filter: blur(0px) brightness(1);
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .envelope-open #heroTitles {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0px);
+    }
+  </style>
+</head>
+
+<body class="min-h-full bg-luxury-bg text-luxury-dark antialiased overflow-x-hidden pb-28 selection:bg-gold-400 selection:text-white">
+
+  <!-- مشغل أغنية 3 دقات الخفي -->
+  <audio id="weddingAudio" src="https://files.catbox.moe/5ma570.m4a" preload="auto" loop></audio>
+
+  <!-- 1. شاشة الختم الافتتاحية -->
+  <div id="envelopeOverlay" class="fixed inset-0 z-[100] overflow-hidden flex items-center justify-center bg-[#eef9ff]">
+    <div class="absolute inset-[-24px] bg-cover bg-center" style="background-image: url('https://buharita.com/couple/2.webp');"></div>
+    <div class="absolute inset-0 bg-[#f5ecdf]/70 backdrop-blur-[2px]"></div>
+
+    <!-- النصف الأيمن للستارة -->
+    <div class="door-right absolute inset-y-0 right-0 w-1/2 bg-[#fcf9f2]/85 backdrop-blur-2xl border-l border-gold-400/40 shadow-[-18px_0_60px_rgba(86,48,24,0.25)]">
+      <div class="absolute inset-0 bg-gradient-to-l from-white/80 via-white/50 to-white/10"></div>
+      <div class="absolute bottom-0 right-0 h-1/3 w-full bg-cover bg-bottom opacity-25" style="background-image: url('https://buharita.com/couple/2.webp');"></div>
+    </div>
+
+    <!-- النصف الأيسر للستارة -->
+    <div class="door-left absolute inset-y-0 left-0 w-1/2 bg-[#fcf9f2]/85 backdrop-blur-2xl border-r border-gold-400/40 shadow-[18px_0_60px_rgba(86,48,24,0.25)]">
+      <div class="absolute inset-0 bg-gradient-to-r from-white/80 via-white/50 to-white/10"></div>
+      <div class="absolute bottom-0 left-0 h-1/3 w-full bg-cover bg-bottom opacity-25" style="background-image: url('https://buharita.com/couple/2.webp');"></div>
+    </div>
+
+    <!-- تلميح الختم -->
+    <div id="sealHint" class="absolute top-[22vh] z-20 flex flex-col items-center gap-2 text-xs font-black uppercase tracking-[0.25em] text-[#9c6f28] drop-shadow-md transition duration-500">
+      <span class="bg-white/80 px-4 py-1.5 rounded-full shadow-sm border border-gold-400/30">اضغطوا على الختم لفتح الدعوة</span>
+      <i data-lucide="arrow-down" class="h-6 w-6 animate-bounce text-gold-500"></i>
+    </div>
+
+    <!-- زر الختم الملكي -->
+    <button id="sealBtn" type="button" class="group absolute z-20 flex h-52 w-52 sm:h-60 sm:w-60 flex-col items-center justify-center overflow-hidden rounded-full border-2 border-white/95 bg-[#fffdfa]/95 text-center shadow-[0_25px_70px_rgba(110,65,25,0.4),0_0_0_14px_rgba(245,223,150,0.45),inset_0_0_35px_rgba(212,175,55,0.3)] backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,1),rgba(250,238,215,0.8))]"></div>
+      <div class="absolute inset-3.5 rounded-full border-2 border-gold-400/40"></div>
+      <div class="absolute inset-6 rounded-full border border-white"></div>
+      <span class="relative z-10 font-serif text-4xl sm:text-5xl font-extrabold text-[#8a5d1b] drop-shadow-md">M &amp; A</span>
+      <span class="relative z-10 mt-2 text-xs font-black uppercase tracking-[0.3em] text-[#a0742d]">Mohamed &amp; Asmaa</span>
+    </button>
+  </div>
+
+  <!-- 2. محتوى الدعوة الرئيسي -->
+  <main class="relative min-h-screen w-full overflow-x-hidden bg-repeat-y bg-top" style="background-image: linear-gradient(180deg, rgba(65,40,15,0.5), transparent 36%, rgba(65,40,15,0.5)), url('https://buharita.com/couple/2.webp'); background-size: 100% auto;">
+
+    <!-- واجهة الفيديو والأسماء -->
+    <section class="relative h-screen w-full flex flex-col justify-between items-center text-center p-6 overflow-hidden bg-cover bg-center">
+      
+      <div id="heroMedia" class="absolute inset-0 z-0 h-full w-full object-cover">
+        <video id="bgVideo" muted loop playsinline class="h-full w-full object-cover" poster="https://buharita.com/couple/1.webp">
+          <source src="https://buharita.com/couple/video.mp4" type="video/mp4" />
+        </video>
+        <div class="absolute inset-0 bg-cover bg-center -z-10" style="background-image: url('https://buharita.com/couple/1.webp');"></div>
+      </div>
+
+      <!-- إطار الزخرفة الذهبي -->
+      <div class="absolute inset-0 z-[5] pointer-events-none">
+        <img src="https://buharita.com/inv-arabe-couleur/inv-arabe-couleur-or.webp" alt="إطار ذهبي" class="h-full w-full object-contain object-top drop-shadow-lg" />
+      </div>
+      <div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-black/55 via-transparent to-black/75"></div>
+
+      <div class="pt-[14vh] z-10"></div>
+
+      <!-- أسماء العروسين -->
+      <div id="heroTitles" dir="ltr" class="z-10 mx-auto mb-16 flex w-full max-w-3xl items-center justify-center px-4 text-center flex-row flex-wrap gap-x-5 sm:gap-x-10">
+        <h1 class="font-cursive text-6xl sm:text-8xl md:text-9xl font-normal text-white drop-shadow-[0_6px_20px_rgba(0,0,0,0.95)]">Mohamed</h1>
+        <span class="font-serif text-3xl sm:text-5xl font-bold italic text-gold-300 drop-shadow-[0_3px_10px_rgba(0,0,0,0.9)]">&amp;</span>
+        <h1 class="font-cursive text-6xl sm:text-8xl md:text-9xl font-normal text-white drop-shadow-[0_6px_20px_rgba(0,0,0,0.95)]">Asmaa</h1>
+      </div>
+
+      <div class="z-10 w-full pb-8 flex flex-col items-center">
+        <div class="h-10 w-0.5 bg-gradient-to-b from-gold-300 to-transparent"></div>
+      </div>
+    </section>
+
+    <!-- أقسام تفاصيل الحفل -->
+    <div class="relative z-10 max-w-2xl mx-auto w-full px-4 py-16 space-y-20">
+
+      <!-- الآية القرآنية -->
+      <section class="text-center">
+        <div class="bg-[#fffdfa]/95 backdrop-blur-xl rounded-[2.5rem] p-8 sm:p-12 shadow-[0_20px_50px_rgba(78,50,20,0.2)] border-2 border-gold-400/40 space-y-6">
+          <div class="flex items-center justify-center gap-3 text-gold-600">
+            <div class="h-[1.5px] w-14 sm:w-24 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
+            <i data-lucide="heart" class="w-6 h-6 text-gold-500 fill-gold-500"></i>
+            <div class="h-[1.5px] w-14 sm:w-24 bg-gradient-to-l from-transparent via-gold-400 to-transparent"></div>
+          </div>
+
+          <p class="font-amiri text-2xl sm:text-3xl text-luxury-brown font-bold leading-relaxed">
+            وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ
+          </p>
+
+          <div class="h-[1.5px] w-20 bg-gold-400/50 mx-auto"></div>
+
+          <p class="text-base sm:text-lg text-luxury-lightBrown font-bold leading-relaxed">
+            نتشرف بدعوتكم لمشاركتنا فرحتنا بمناسبة زفاف <span class="text-gold-600 font-extrabold">محمد &amp; أسماء</span> والاحتفال معنا بهذه المناسبة المباركة.
+          </p>
+        </div>
+      </section>
+
+      <!-- التقويم المعلق الفاخر (نظام 12 ساعة) -->
+      <section id="calendar" class="text-center px-2 scroll-mt-24">
+        <div class="relative mx-auto w-full max-w-[23rem] sm:max-w-sm">
+          
+          <div class="relative overflow-hidden rounded-[36px] bg-[#fffdfa]/95 shadow-[0_25px_60px_rgba(80,45,18,0.22)] border-2 border-gold-400/50 ring-1 ring-white">
+            
+            <div class="relative h-28 rounded-t-[34px] bg-gradient-to-r from-[#ffe4ec] via-[#f7b8c8] to-[#9b6f5d] px-6 text-white shadow-inner flex items-center justify-between">
+              
+              <div class="pointer-events-none absolute left-1/2 -top-2 z-20 flex -translate-x-1/2 gap-16 sm:gap-20">
+                <span class="h-16 w-8 rounded-b-2xl border-[3px] border-[#fde8bb] bg-[#693d1b] shadow-[0_8px_18px_rgba(60,30,10,0.35)]"></span>
+                <span class="h-16 w-8 rounded-b-2xl border-[3px] border-[#fde8bb] bg-[#693d1b] shadow-[0_8px_18px_rgba(60,30,10,0.35)]"></span>
+              </div>
+
+              <div class="z-10 flex w-full justify-between items-end pb-4 px-2 font-serif text-lg font-bold text-luxury-brown">
+                <span class="drop-shadow-sm text-base sm:text-lg font-black text-[#5c3722]">الإثنين</span>
+                <span class="text-2xl font-black text-[#5c3722] drop-shadow-sm">أكتوبر</span>
+                <span class="drop-shadow-sm text-base sm:text-lg font-black text-[#5c3722]">2026</span>
+              </div>
+            </div>
+
+            <!-- شبكة الأيام -->
+            <div class="relative p-6 pt-5">
+              <div class="grid grid-cols-7 gap-1 text-center text-xs font-black text-[#688a96] mb-3">
+                <span>الأحد</span><span>الإثنين</span><span>الثلاثاء</span><span>الأربعاء</span><span>الخميس</span><span>الجمعة</span><span>السبت</span>
+              </div>
+
+              <div class="grid grid-cols-7 gap-y-3.5 text-center text-sm font-bold text-luxury-brown items-center">
+                <span></span><span></span><span></span><span></span>
+                <span>1</span><span>2</span><span>3</span>
+                
+                <!-- الأحد 4 (يوم الحنة) -->
+                <div class="flex items-center justify-center">
+                  <a href="#henna-details" class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-amber-600/40 bg-amber-500/20 text-amber-950 font-black shadow-sm hover:scale-115 hover:bg-amber-600 hover:text-white transition-all cursor-pointer" title="اضغط لعرض تفاصيل يوم الحنة">
+                    4
+                  </a>
+                </div>
+                
+                <!-- الإثنين 5 (يوم الزفاف) -->
+                <div class="flex items-center justify-center">
+                  <a href="#wedding-details" class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#3ea3b8] bg-[#3ea3b8]/20 text-[#1b6574] font-black shadow-md transform scale-110 hover:scale-125 hover:bg-[#3ea3b8] hover:text-white transition-all cursor-pointer" title="اضغط لعرض تفاصيل حفل الزفاف">
+                    5
+                  </a>
+                </div>
+
+                <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                <span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span>
+                <span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span>
+                <span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-gold-400/30 flex flex-col items-center gap-1 text-luxury-brown">
+                <span class="text-xs font-bold text-luxury-lightBrown">موعد حفل الزفاف</span>
+                <div class="flex items-center gap-1.5 text-xl font-extrabold text-[#2a7a8a]">
+                  <i data-lucide="clock" class="w-5 h-5"></i>
+                  <span>07:00 مساءً</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=%D8%AF%D8%B9%D9%88%D8%A9+%D8%B2%D9%81%D8%A7%D9%81+Mohamed+%26+Asmaa&dates=20261005T160000Z/20261005T220000Z&details=%D9%86%D8%AA%D8%B4%D8%B1%D9%81+%D8%A8%D8%AF%D8%B9%D9%88%D8%AA%D9%83%D9%85+%D9%84%D8%AD%D8%B6%D9%88%D8%B1+%D8%AD%D9%81%D9%84+%D8%B2%D9%81%D8%A7%D9%81+%D9%85%D8%AD%D9%85%D8%AF+%D9%88%D8%A3%D8%B3%D9%85%D8%A7%D8%A1&location=%D9%82%D8%A7%D8%B9%D8%A9+%D8%A7%D9%84%D8%A3%D9%88%D8%B1%D9%83%D9%8A%D8%AF%D8%A9" target="_blank" class="mx-auto mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-white/95 px-8 py-3.5 text-sm font-bold text-luxury-brown shadow-[0_12px_28px_rgba(78,43,22,0.18)] border border-gold-400/40 hover:bg-gold-400 hover:text-white transition duration-300">
+            <i data-lucide="calendar" class="w-4 h-4 text-gold-500"></i>
+            <span>حفظ التاريخ</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- العداد التنازلي -->
+      <section class="text-center">
+        <div class="bg-[#fffdfa]/95 backdrop-blur-xl border-2 border-gold-400/40 rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(78,50,20,0.2)] space-y-6">
+          <span class="text-xs uppercase tracking-[0.25em] text-gold-600 font-extrabold block">العد التنازلي للزفاف</span>
+          <div class="grid grid-cols-4 gap-2 sm:gap-4 max-w-md mx-auto">
+            <div class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-white border border-gold-400/30 shadow-md">
+              <span id="cd-days" class="font-serif text-3xl sm:text-4xl font-extrabold text-[#437435]">00</span>
+              <span class="text-xs font-bold text-luxury-lightBrown mt-1">أيام</span>
+            </div>
+            <div class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-white border border-gold-400/30 shadow-md">
+              <span id="cd-hours" class="font-serif text-3xl sm:text-4xl font-extrabold text-[#437435]">00</span>
+              <span class="text-xs font-bold text-luxury-lightBrown mt-1">ساعات</span>
+            </div>
+            <div class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-white border border-gold-400/30 shadow-md">
+              <span id="cd-minutes" class="font-serif text-3xl sm:text-4xl font-extrabold text-[#437435]">00</span>
+              <span class="text-xs font-bold text-luxury-lightBrown mt-1">دقائق</span>
+            </div>
+            <div class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-white border border-gold-400/30 shadow-md">
+              <span id="cd-seconds" class="font-serif text-3xl sm:text-4xl font-extrabold text-[#437435]">00</span>
+              <span class="text-xs font-bold text-luxury-lightBrown mt-1">ثواني</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- تفاصيل ليلة الحنة -->
+      <section id="henna-details" class="text-center scroll-mt-24">
+        <div class="bg-[#fffdfa]/95 backdrop-blur-xl border-2 border-amber-600/40 rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_50px_rgba(78,50,20,0.2)] space-y-6">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-600/15 text-amber-900 font-extrabold text-xs">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-700"></i>
+            <span>تفاصيل ليلة الحنة (الأحد 4 أكتوبر 2026)</span>
+          </div>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-luxury-brown">برنامج يوم الحنة</h2>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-right pt-2">
+            <div class="p-5 rounded-3xl bg-amber-50/70 border border-amber-600/30 shadow-sm space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-serif text-lg font-black text-amber-900">02:00 ظهراً</span>
+                <i data-lucide="utensils" class="w-5 h-5 text-amber-700"></i>
+              </div>
+              <h4 class="font-bold text-luxury-brown text-base">طعام الغداء</h4>
+              <p class="text-xs text-luxury-lightBrown font-semibold">يشرفنا حضوركم لتناول طعام الغداء مع العائلة والأصدقاء</p>
+            </div>
+
+            <div class="p-5 rounded-3xl bg-amber-50/70 border border-amber-600/30 shadow-sm space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-serif text-lg font-black text-amber-900">مساءً</span>
+                <i data-lucide="music" class="w-5 h-5 text-amber-700"></i>
+              </div>
+              <h4 class="font-bold text-luxury-brown text-base">ليلة الحنة والاحتفال</h4>
+              <p class="text-xs text-luxury-lightBrown font-semibold">حفل الحنة والأغاني ومشاركة الفرحة أمام المنزل</p>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <a href="https://maps.app.goo.gl/iq9EMF8spVDh5Uug9?g_st=ac" target="_blank" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-amber-800 hover:bg-amber-900 text-white font-bold text-xs shadow-md transition">
+              <i data-lucide="map-pin" class="w-4 h-4"></i>
+              <span>موقع الحنة أمام المنزل على خرائط Google</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- تفاصيل حفل الزفاف مع الوردة التفاعلية -->
+      <section id="wedding-details" class="text-center scroll-mt-24">
+        <div class="bg-[#fffdfa]/95 backdrop-blur-xl border-2 border-gold-400/40 rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_50px_rgba(78,50,20,0.2)] space-y-8">
+          <div>
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold-400/20 text-gold-600 font-extrabold text-xs mb-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-gold-500"></i>
+              <span>تفاصيل حفل الزفاف (الإثنين 5 أكتوبر 2026)</span>
+            </div>
+            <h2 class="font-serif text-2xl sm:text-3xl font-bold text-luxury-brown">برنامج حفل الزفاف - قاعة الأوركيدة</h2>
+          </div>
+
+          <div id="timelineContainer" class="relative max-w-xl mx-auto pt-2 pb-2 text-right pe-4">
+            
+            <div id="timelineBgLine" class="absolute end-[80px] md:end-[130px] w-[3px] bg-gold-400/25 rounded-full"></div>
+            <div id="timelineProgress" class="absolute end-[80px] md:end-[130px] w-[3px] bg-gold-400 rounded-full shadow-[0_0_12px_rgba(212,175,55,0.9)] transition-all duration-150" style="height: 0px;"></div>
+
+            <div id="roseIndicator" class="absolute end-[80px] md:end-[130px] w-0 h-0 z-30 pointer-events-none transition-all duration-150">
+              <div class="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center">
+                <img src="https://buharita.com/rose.webp" alt="Rose" class="w-8 h-8 object-contain drop-shadow-[0_4px_10px_rgba(212,175,55,0.7)] animate-pulse" />
+              </div>
+            </div>
+
+            <!-- أحداث البرنامج -->
+            <div class="flex flex-col space-y-8 pt-1">
+              
+              <!-- 1. استقبال الضيوف -->
+              <div id="timeline-node-1" class="timeline-node flex flex-row items-center w-full relative">
+                <div class="flex-1 ps-4 sm:ps-6">
+                  <div class="p-5 rounded-2xl bg-white border border-gold-400/40 shadow-sm text-right">
+                    <h4 class="font-bold text-luxury-brown text-base sm:text-lg">استقبال الضيوف</h4>
+                    <p class="text-xs sm:text-sm text-luxury-lightBrown mt-1">مشروبات ترحيبية واستقبال الأهل والأحباب</p>
+                  </div>
+                </div>
+                <div class="w-[85px] md:w-[130px] shrink-0 flex justify-start ps-3 sm:ps-4">
+                  <span class="font-serif text-base md:text-xl font-extrabold text-luxury-brown">07:00 م</span>
+                </div>
+              </div>
+
+              <!-- 2. دخول العروسين -->
+              <div id="timeline-node-2" class="timeline-node flex flex-row items-center w-full relative">
+                <div class="flex-1 ps-4 sm:ps-6">
+                  <div class="p-5 rounded-2xl bg-white border border-gold-400/40 shadow-sm text-right">
+                    <h4 class="font-bold text-luxury-brown text-base sm:text-lg">دخول العروسين</h4>
+                    <p class="text-xs sm:text-sm text-luxury-lightBrown mt-1">بدء مراسم الزفة ومشاركة الفرحة مع العروسين</p>
+                  </div>
+                </div>
+                <div class="w-[85px] md:w-[130px] shrink-0 flex justify-start ps-3 sm:ps-4">
+                  <span class="font-serif text-base md:text-xl font-extrabold text-luxury-brown">08:30 م</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- معرض الصور -->
+      <section id="gallery" class="text-center scroll-mt-24">
+        <div class="bg-[#fffdfa]/95 backdrop-blur-xl border-2 border-gold-400/40 rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(78,50,20,0.2)] space-y-6">
+          <div>
+            <span class="text-xs uppercase tracking-[0.25em] text-gold-600 font-extrabold block">معرض الصور</span>
+            <h2 class="font-serif text-2xl sm:text-3xl font-bold text-luxury-brown mt-1">لحظاتنا الجميلة</h2>
+          </div>
+
+          <div dir="ltr" class="scrollbar-hide flex w-full overflow-x-auto snap-x snap-mandatory gap-4 px-2 py-4">
+            <div class="flex-shrink-0 snap-center w-60 h-72 bg-[#fffaf0] p-3 pb-8 rounded-lg shadow-lg rotate-[-1.5deg] hover:rotate-0 hover:scale-105 transition duration-300 border border-gold-400/30">
+              <img src="https://buharita.com/imgdefault/1.webp" alt="Photo 1" class="w-full h-full object-cover rounded shadow" />
+            </div>
+            <div class="flex-shrink-0 snap-center w-60 h-72 bg-[#fffaf0] p-3 pb-8 rounded-lg shadow-lg rotate-[1.5deg] hover:rotate-0 hover:scale-105 transition duration-300 border border-gold-400/30">
+              <img src="https://buharita.com/imgdefault/2.webp" alt="Photo 2" class="w-full h-full object-cover rounded shadow" />
+            </div>
+            <div class="flex-shrink-0 snap-center w-60 h-72 bg-[#fffaf0] p-3 pb-8 rounded-lg shadow-lg rotate-[-1.5deg] hover:rotate-0 hover:scale-105 transition duration-300 border border-gold-400/30">
+              <img src="https://buharita.com/imgdefault/3.webp" alt="Photo 3" class="w-full h-full object-cover rounded shadow" />
+            </div>
+            <div class="flex-shrink-0 snap-center w-60 h-72 bg-[#fffaf0] p-3 pb-8 rounded-lg shadow-lg rotate-[1.5deg] hover:rotate-0 hover:scale-105 transition duration-300 border border-gold-400/30">
+              <img src="https://buharita.com/imgdefault/4.webp" alt="Photo 4" class="w-full h-full object-cover rounded shadow" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- مواقع الحفل واللوكيشن -->
+      <section id="location" class="text-center scroll-mt-24">
+        <div class="bg-[#fffdfa]/95 backdrop-blur-xl border-2 border-gold-400/40 rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(78,50,20,0.2)] space-y-8">
+          <div>
+            <span class="text-xs uppercase tracking-[0.25em] text-gold-600 font-extrabold block">خرائط الوصول</span>
+            <h2 class="font-serif text-2xl sm:text-3xl font-bold text-luxury-brown mt-1">مواقع الاحتفال</h2>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6">
+            <!-- قاعة الأوركيدة -->
+            <div class="p-6 rounded-3xl bg-white border border-gold-400/40 shadow-md space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-3.5 py-1 rounded-full bg-gold-400/20 text-gold-600 font-extrabold text-xs">حفل الزفاف - 5 أكتوبر</span>
+                <i data-lucide="sparkles" class="w-5 h-5 text-gold-500"></i>
+              </div>
+              <h3 class="font-bold text-lg text-luxury-brown text-right">قاعة الأوركيدة</h3>
+              <a href="https://maps.app.goo.gl/FQZLH4QLF2tFpqns8?g_st=ac" target="_blank" class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gold-500 hover:bg-gold-600 text-white font-bold text-sm shadow-md transition">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                <span>فتح موقع قاعة الأوركيدة (Google Maps)</span>
+              </a>
+            </div>
+
+            <!-- المنزل -->
+            <div class="p-6 rounded-3xl bg-white border border-gold-400/40 shadow-md space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-3.5 py-1 rounded-full bg-amber-700/15 text-amber-800 font-extrabold text-xs">ليلة الحنة - 4 أكتوبر</span>
+                <i data-lucide="home" class="w-5 h-5 text-amber-700"></i>
+              </div>
+              <h3 class="font-bold text-lg text-luxury-brown text-right">أمام المنزل</h3>
+              <a href="https://maps.app.goo.gl/iq9EMF8spVDh5Uug9?g_st=ac" target="_blank" class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-luxury-brown hover:bg-[#281b10] text-white font-bold text-sm shadow-md transition">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                <span>فتح موقع المنزل (Google Maps)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- دفتر التهاني -->
+      <section id="guestbook" class="scroll-mt-24">
+        <div class="bg-[#fffdfa]/95 backdrop-blur-xl border-2 border-gold-400/40 rounded-[2.5rem] p-6 sm:p-10 shadow-[0_20px_50px_rgba(78,50,20,0.2)] space-y-6">
+          <div class="text-center space-y-1">
+            <span class="text-xs uppercase tracking-[0.25em] text-gold-600 font-extrabold block">دفتر التهاني</span>
+            <h3 class="font-serif text-2xl sm:text-3xl font-bold text-luxury-brown">اتركوا كلمة طيبة للعروسين</h3>
+          </div>
+
+          <form id="wishesForm" class="space-y-3 text-right">
+            <input type="text" id="wishSender" required placeholder="اسمك أو عائلتك" class="w-full px-4 py-3 rounded-2xl bg-white border border-gold-400/30 text-sm focus:outline-none focus:ring-2 focus:ring-gold-400" />
+            <textarea id="wishText" required rows="3" placeholder="اكتب مباركتك للعروسين محمد وأسماء..." class="w-full px-4 py-3 rounded-2xl bg-white border border-gold-400/30 text-sm focus:outline-none focus:ring-2 focus:ring-gold-400 resize-none"></textarea>
+            <button type="submit" class="w-full py-3.5 rounded-full bg-gold-500 hover:bg-gold-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg transition cursor-pointer">
+              <span>نشر التهنئة</span>
+              <i data-lucide="message-square-heart" class="w-4 h-4"></i>
+            </button>
+          </form>
+
+          <div id="wishesList" class="space-y-3 max-h-72 overflow-y-auto pr-1">
+            <div class="p-4 rounded-2xl bg-white border border-gold-400/30 shadow-sm text-right">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-luxury-brown text-sm">عائلة العروسين</span>
+                <span class="text-[10px] text-gray-400">الآن</span>
+              </div>
+              <p class="text-xs text-luxury-lightBrown leading-relaxed font-semibold">ألف مبروك لمحمد وأسماء، بارك الله لكما وبارك عليكما وجمع بينكما في خير وسعادة دائمين ❤️</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- الفوتر -->
+      <footer id="contact" class="text-center pt-4 pb-8">
+        <span class="inline-block px-5 py-2.5 rounded-full bg-luxury-dark/95 text-gold-300 text-xs font-bold tracking-wide shadow-xl border border-gold-400/30">
+          صُنعت بكل 🤍 بمناسبة زفاف محمد &amp; أسماء
+        </span>
+      </footer>
+
+    </div>
+  </main>
+
+  <!-- 3. شريط التنقل السفلي الفاخر -->
+  <div class="fixed bottom-4 inset-x-4 max-w-md mx-auto z-40">
+    <div class="flex items-center justify-between px-4 py-2.5 rounded-full bg-[#fffdfa]/95 backdrop-blur-2xl border-2 border-gold-400/50 shadow-[0_15px_40px_rgba(70,40,15,0.3)]">
+      
+      <!-- زر تواصل WhatsApp -->
+      <a href="https://wa.me/201023257600" target="_blank" class="flex flex-col items-center gap-0.5 text-luxury-lightBrown hover:text-gold-600 transition">
+        <i data-lucide="phone" class="w-4 h-4"></i>
+        <span class="text-[10px] font-bold">تواصل</span>
+      </a>
+
+      <!-- زر الموسيقى 3 دقات -->
+      <button id="musicDockBtn" type="button" class="flex flex-col items-center gap-0.5 text-luxury-lightBrown hover:text-gold-600 transition cursor-pointer">
+        <i id="musicDockIcon" data-lucide="volume-2" class="w-4 h-4 text-gold-600"></i>
+        <span class="text-[10px] font-bold text-gold-600">3 دقات</span>
+      </button>
+
+      <!-- زر الصور -->
+      <a href="#gallery" class="flex flex-col items-center gap-0.5 text-luxury-lightBrown hover:text-gold-600 transition">
+        <i data-lucide="image" class="w-4 h-4"></i>
+        <span class="text-[10px] font-bold">الصور</span>
+      </a>
+
+      <!-- زر المكان -->
+      <a href="#location" class="flex flex-col items-center gap-0.5 text-luxury-lightBrown hover:text-gold-600 transition">
+        <i data-lucide="map-pin" class="w-4 h-4"></i>
+        <span class="text-[10px] font-bold">المكان</span>
+      </a>
+
+      <!-- زر البرنامج -->
+      <a href="#calendar" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gold-500 text-white font-bold text-xs shadow hover:bg-gold-600 transition">
+        <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+        <span>البرنامج</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- السكربت والتفاعلات بالكامل -->
+  <script>
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyEMaKeeYO4m_56qmlQPSkSHWBbAo06MdLWxCijxRBWnOr4eUKHiReTBQdwRo6YN1i_/exec";
+
+    lucide.createIcons();
+
+    const sealBtn = document.getElementById('sealBtn');
+    const bgVideo = document.getElementById('bgVideo');
+    const audio = document.getElementById('weddingAudio');
+    const musicDockBtn = document.getElementById('musicDockBtn');
+    const musicDockIcon = document.getElementById('musicDockIcon');
+    
+    let isPlaying = false;
+    let isAutoScrolling = false;
+
+    // تشغيل / إيقاف الأغنية
+    function toggleAudio() {
+      if (isPlaying) {
+        audio.pause();
+        musicDockIcon.setAttribute('data-lucide', 'volume-x');
+        musicDockIcon.classList.remove('text-gold-600', 'animate-pulse');
+      } else {
+        audio.play().then(() => {
+          musicDockIcon.setAttribute('data-lucide', 'volume-2');
+          musicDockIcon.classList.add('text-gold-600', 'animate-pulse');
+        }).catch(e => console.log(e));
+      }
+      isPlaying = !isPlaying;
+      lucide.createIcons();
+    }
+
+    musicDockBtn.addEventListener('click', toggleAudio);
+
+    // الضغط على الختم وبدء التمرير التلقائي
+    sealBtn.addEventListener('click', () => {
+      document.body.classList.add('envelope-open');
+      
+      if (bgVideo) bgVideo.play().catch(e => console.log(e));
+      
+      audio.play().then(() => {
+        isPlaying = true;
+        musicDockIcon.classList.add('animate-pulse');
+      }).catch(e => console.log('Audio autoplay blocked:', e));
+
+      // بدء التمرير بعد انتهاء البلور
+      setTimeout(() => {
+        startSmoothAutoScroll();
+      }, 4500);
+    });
+
+    // دالة التمرير التلقائي الفائقة التوافق مع الهواتف
+    function startSmoothAutoScroll() {
+      isAutoScrolling = true;
+      let lastTime = performance.now();
+      const speed = 42;
+
+      function step(now) {
+        if (!isAutoScrolling) return;
+
+        const delta = (now - lastTime) / 1000;
+        lastTime = now;
+
+        const moveBy = speed * delta;
+        window.scrollBy(0, moveBy);
+
+        if ((window.innerHeight + window.pageYOffset) >= (document.documentElement.scrollHeight - 15)) {
+          isAutoScrolling = false;
+          return;
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      requestAnimationFrame(step);
+
+      // إيقاف التمرير عند لمس الشاشة
+      setTimeout(() => {
+        const stopScroll = () => { isAutoScrolling = false; };
+        ['touchstart', 'touchmove', 'wheel', 'mousedown'].forEach(evt => {
+          window.addEventListener(evt, stopScroll, { once: true, passive: true });
+        });
+      }, 300);
+    }
+
+    // حركة الوردة الدقيقة بين استقبال الضيوف ودخول العروسين
+    function updateRoseTimeline() {
+      const node1 = document.getElementById('timeline-node-1');
+      const node2 = document.getElementById('timeline-node-2');
+      const rose = document.getElementById('roseIndicator');
+      const progress = document.getElementById('timelineProgress');
+      const bgLine = document.getElementById('timelineBgLine');
+      const container = document.getElementById('timelineContainer');
+      
+      if (!node1 || !node2 || !rose || !progress || !container) return;
+
+      const node1Center = node1.offsetTop + (node1.offsetHeight / 2);
+      const node2Center = node2.offsetTop + (node2.offsetHeight / 2);
+      const totalDistance = node2Center - node1Center;
+
+      if (bgLine) {
+        bgLine.style.top = `${node1Center}px`;
+        bgLine.style.height = `${totalDistance}px`;
+      }
+
+      const rect = container.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const triggerPoint = windowHeight * 0.75;
+      const currentScroll = triggerPoint - rect.top;
+
+      let percentage = (currentScroll - node1Center) / totalDistance;
+      percentage = Math.max(0, Math.min(1, percentage));
+
+      const currentTravel = totalDistance * percentage;
+      const currentPos = node1Center + currentTravel;
+
+      progress.style.top = `${node1Center}px`;
+      progress.style.height = `${currentTravel}px`;
+      rose.style.top = `${currentPos}px`;
+    }
+
+    window.addEventListener('scroll', updateRoseTimeline, { passive: true });
+    window.addEventListener('resize', updateRoseTimeline);
+    window.addEventListener('DOMContentLoaded', updateRoseTimeline);
+
+    // العد التنازلي لليلة الزفاف
+    const weddingDate = new Date('2026-10-05T19:00:00').getTime();
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const difference = weddingDate - now;
+
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
+        document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
+        document.getElementById('cd-minutes').innerText = String(minutes).padStart(2, '0');
+        document.getElementById('cd-seconds').innerText = String(seconds).padStart(2, '0');
+      }
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // نشر التهنئة وحفظها في Google Sheets
+    document.getElementById('wishesForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const sender = document.getElementById('wishSender').value.trim();
+      const text = document.getElementById('wishText').value.trim();
+      if (!sender || !text) return;
+
+      const wishesList = document.getElementById('wishesList');
+      const card = document.createElement('div');
+      card.className = "p-4 rounded-2xl bg-white border border-gold-400/30 shadow-sm text-right";
+      card.innerHTML = `
+        <div class="flex justify-between items-center mb-1">
+          <span class="font-bold text-luxury-brown text-sm">${sender}</span>
+          <span class="text-[10px] text-gray-400">الآن</span>
+        </div>
+        <p class="text-xs text-luxury-lightBrown leading-relaxed font-semibold">${text}</p>
+      `;
+
+      wishesList.prepend(card);
+      document.getElementById('wishesForm').reset();
+
+      fetch(GOOGLE_SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ sender: sender, text: text })
+      }).catch(err => console.log('Error saving to sheet:', err));
+    });
+  </script>
+</body>
+</html>
