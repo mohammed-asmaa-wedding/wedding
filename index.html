@@ -136,15 +136,8 @@
         /* انتقال ناعم لبطاقات الصور */
         
         .photo-card {
-            transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), filter 0.45s ease, opacity 0.45s ease, box-shadow 0.45s ease;
+            transition: transform 0.35s ease, filter 0.35s ease, opacity 0.35s ease, box-shadow 0.35s ease;
             will-change: transform, filter, opacity;
-            scroll-snap-align: center;
-            scroll-snap-stop: always;
-        }
-
-        #infiniteGallery {
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
         }
     </style>
 </head>
@@ -432,7 +425,7 @@
                 </div>
             </section>
 
-            <!-- معرض الصور التفاعلي السينمائي (ترتيب تنازلي من 6 إلى 1) -->
+            <!-- معرض الصور التفاعلي السينمائي (انسيابي وبطيء دون قفز) -->
             <section id="gallery" class="text-center scroll-mt-24">
                 <div class="bg-[#fffdfa]/95 backdrop-blur-xl border-2 border-gold-400/40 rounded-[2.5rem] p-6 sm:p-8 shadow-[0_20px_50px_rgba(78,50,20,0.2)] space-y-6">
                     <div>
@@ -537,7 +530,7 @@
                                 <span class="font-bold text-luxury-brown text-sm">${sender}</span>
                                 <span class="text-[10px] text-gray-400">الآن</span>
                             </div>
-                            <p class="text-xs text-luxury-lightBrown leading-relaxed font-semibold">ألف مبروك لمحمد وأسماء، بارك الله لكما وبارك عليكما وجمع بينكما في خير وسعادة دائمين ❤️</p>
+                            <p class="text-xs text-luxury-lightBrown leading-relaxed font-semibold">${text}</p>
                         </div>
                     </div>
                 </div>
@@ -608,13 +601,13 @@
         ];
 
         // =========================================================================
-        // ⚙️ إعدادات التحكم في حجم التكبير والبلور وتوقيت السلايدر
+        // ⚙️ إعدادات التحكم في حجم التكبير والبلور وسرعة الحركة التلقائية
         // =========================================================================
         const ACTIVE_PHOTO_SCALE = 1.18;
         const NORMAL_PHOTO_SCALE = 0.88;
         const SIDE_PHOTO_BLUR = 3;
         const SIDE_PHOTO_OPACITY = 0.65;
-        const GALLERY_AUTO_SLIDE_INTERVAL = 1400; // تقليب الصور كل 1.4 ثانية تلقائياً
+        const GALLERY_DRIFT_SPEED = 24; // بكسل في الثانية لحركة المعرض البطيئة الانسيابية
         // =========================================================================
 
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyEMaKeeYO4m_56qmlQPSkSHWBbAo06MdLWxCijxRBWnOr4eUKHiReTBQdwRo6YN1i_/exec";
@@ -638,8 +631,10 @@
         let resumeScrollTimer = null;
         let animationFrameId = null;
         let galleryReached = false;
-        let gallerySliderTimer = null;
+        
+        let isGalleryDrifting = false;
         let userInteractedWithGallery = false;
+        let lastDriftTimestamp = performance.now();
 
         // دالة اختيار أغنية عشوائية وتجهيزها
         function pickRandomSong() {
@@ -724,16 +719,12 @@
             }
         }
 
-        // =========================================================================
-        // 2. التحقق من توسيط قسم الصور تماماً في منتصف الشاشة
-        // =========================================================================
+        // التحقق من توسيط قسم الصور في منتصف الشاشة
         function isGalleryCentered() {
             if (!gallerySection) return false;
             const rect = gallerySection.getBoundingClientRect();
             const galleryCenter = rect.top + (rect.height / 2);
             const windowCenter = window.innerHeight / 2;
-
-            // عندما يكون منتصف قسم الصور متطابقاً مع منتصف الشاشة (بفارق 8 بكسل كحد أقصى)
             return Math.abs(galleryCenter - windowCenter) <= 8;
         }
 
@@ -761,11 +752,10 @@
             function scrollStep(currentTimestamp) {
                 if (!isAutoScrolling) return;
 
-                // التوقف عندما تتوسط الصور الشاشة تماماً
                 if (isGalleryCentered()) {
                     isAutoScrolling = false;
                     galleryReached = true;
-                    startGalleryAutoSlide(); // بدء تقليب الصور تلقائياً بعد الوقوف
+                    startGalleryDrift(); // بدء الحركة البطيئة المستمرة للصور
                     return;
                 }
 
@@ -800,25 +790,15 @@
             }, 2500);
         }
 
-        window.addEventListener('touchstart', pauseAutoScroll, {
-            passive: true
-        });
-        window.addEventListener('mousedown', pauseAutoScroll, {
-            passive: true
-        });
+        window.addEventListener('touchstart', pauseAutoScroll, { passive: true });
+        window.addEventListener('mousedown', pauseAutoScroll, { passive: true });
         window.addEventListener('wheel', () => {
             pauseAutoScroll();
             triggerResumeTimer();
-        }, {
-            passive: true
-        });
+        }, { passive: true });
 
-        window.addEventListener('touchend', triggerResumeTimer, {
-            passive: true
-        });
-        window.addEventListener('mouseup', triggerResumeTimer, {
-            passive: true
-        });
+        window.addEventListener('touchend', triggerResumeTimer, { passive: true });
+        window.addEventListener('mouseup', triggerResumeTimer, { passive: true });
 
         // حركة الوردة الدقيقة بين محطات البرنامج
         function updateRoseTimeline() {
@@ -857,7 +837,7 @@
         }
 
         // =========================================================================
-        // 📸 نظام تفاعل الصور التلقائي + التقليب التلقائي بعد التوقف
+        // 📸 نظام تفاعل الصور التلقائي + حركة انسيابية بطيئة
         // =========================================================================
         function updateGalleryFocus() {
             if (!gallerySection || !infiniteGallery) return;
@@ -914,27 +894,29 @@
             });
         }
 
-        // دالة تحريك السلايدر خطوة للأمام
-        function stepGallerySlide() {
-            if (!infiniteGallery || userInteractedWithGallery) return;
-            const cards = infiniteGallery.querySelectorAll('.photo-card');
-            if (!cards.length) return;
+        // دالة الحركة البطيئة الانسيابية (Drift)
+        function driftStep(currentTimestamp) {
+            if (!isGalleryDrifting || userInteractedWithGallery || !infiniteGallery) return;
 
-            const cardWidth = cards[0].offsetWidth + 24;
-            infiniteGallery.scrollBy({ left: cardWidth, behavior: 'smooth' });
+            const delta = (currentTimestamp - lastDriftTimestamp) / 1000;
+            lastDriftTimestamp = currentTimestamp;
+
+            infiniteGallery.scrollLeft += GALLERY_DRIFT_SPEED * delta;
+            updateGalleryFocus();
+
+            requestAnimationFrame(driftStep);
         }
 
-        function startGalleryAutoSlide() {
-            if (gallerySliderTimer || userInteractedWithGallery) return;
-            gallerySliderTimer = setInterval(stepGallerySlide, GALLERY_AUTO_SLIDE_INTERVAL);
+        function startGalleryDrift() {
+            if (isGalleryDrifting || userInteractedWithGallery) return;
+            isGalleryDrifting = true;
+            lastDriftTimestamp = performance.now();
+            requestAnimationFrame(driftStep);
         }
 
-        function stopGalleryAutoSlide() {
+        function stopGalleryDrift() {
             userInteractedWithGallery = true;
-            if (gallerySliderTimer) {
-                clearInterval(gallerySliderTimer);
-                gallerySliderTimer = null;
-            }
+            isGalleryDrifting = false;
         }
 
         if (infiniteGallery) {
@@ -959,13 +941,11 @@
                     infiniteGallery.scrollLeft = infiniteGallery.scrollWidth / 3;
                 }
                 updateGalleryFocus();
-            }, {
-                passive: true
-            });
+            }, { passive: true });
 
-            // إيقاف التقليب التلقائي فور لمس أو تحريك الصور يدوياً
-            ['touchstart', 'touchmove', 'mousedown', 'wheel'].forEach(evt => {
-                infiniteGallery.addEventListener(evt, stopGalleryAutoSlide, { passive: true });
+            // إيقاف الحركة التلقائية بمجرد لمس المعرض أو سحبه يدوياً
+            ['touchstart', 'touchmove', 'mousedown', 'wheel', 'pointerdown'].forEach(evt => {
+                infiniteGallery.addEventListener(evt, stopGalleryDrift, { passive: true });
             });
         }
 
@@ -973,9 +953,7 @@
             updateRoseTimeline();
             checkQuranInView();
             updateGalleryFocus();
-        }, {
-            passive: true
-        });
+        }, { passive: true });
 
         window.addEventListener('resize', () => {
             updateRoseTimeline();
