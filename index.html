@@ -580,12 +580,19 @@
     <!-- السكربت والتفاعلات بالكامل -->
     <script>
         // =========================================================================
-        // 1. إرجاع الصفحة لأعلى نقطة عند كل ريفريش
+        // 1. تصفير موضع الشاشة والبدء دائماً من أعلى نقطة في كل فتح وريفريش
         // =========================================================================
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
         window.scrollTo(0, 0);
+
+        window.addEventListener('load', () => {
+            window.scrollTo(0, 0);
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 50);
+        });
 
         // =========================================================================
         // 🎵 قائمة الأغاني بالامتدادات والأسماء الصحيحة
@@ -755,7 +762,7 @@
                 if (isGalleryCentered()) {
                     isAutoScrolling = false;
                     galleryReached = true;
-                    startGalleryDrift(); // بدء الحركة البطيئة المستمرة للصور
+                    startGalleryDrift();
                     return;
                 }
 
@@ -943,7 +950,6 @@
                 updateGalleryFocus();
             }, { passive: true });
 
-            // إيقاف الحركة التلقائية بمجرد لمس المعرض أو سحبه يدوياً
             ['touchstart', 'touchmove', 'mousedown', 'wheel', 'pointerdown'].forEach(evt => {
                 infiniteGallery.addEventListener(evt, stopGalleryDrift, { passive: true });
             });
