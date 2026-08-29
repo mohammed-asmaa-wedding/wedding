@@ -138,6 +138,13 @@
         .photo-card {
             transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), filter 0.45s ease, opacity 0.45s ease, box-shadow 0.45s ease;
             will-change: transform, filter, opacity;
+            scroll-snap-align: center;
+            scroll-snap-stop: always;
+        }
+
+        #infiniteGallery {
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
         }
     </style>
 </head>
@@ -527,7 +534,7 @@
                     <div id="wishesList" class="space-y-3 max-h-72 overflow-y-auto pr-1">
                         <div class="p-4 rounded-2xl bg-white border border-gold-400/30 shadow-sm text-right">
                             <div class="flex justify-between items-center mb-1">
-                                <span class="font-bold text-luxury-brown text-sm">عائلة العروسين</span>
+                                <span class="font-bold text-luxury-brown text-sm">${sender}</span>
                                 <span class="text-[10px] text-gray-400">الآن</span>
                             </div>
                             <p class="text-xs text-luxury-lightBrown leading-relaxed font-semibold">ألف مبروك لمحمد وأسماء، بارك الله لكما وبارك عليكما وجمع بينكما في خير وسعادة دائمين ❤️</p>
@@ -580,7 +587,15 @@
     <!-- السكربت والتفاعلات بالكامل -->
     <script>
         // =========================================================================
-        // 🎵 قائمة الأغاني بالامتدادات والأسماء الصحيحة والمطابقة لـ GitHub
+        // 1. إرجاع الصفحة لأعلى نقطة عند كل ريفريش
+        // =========================================================================
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        // =========================================================================
+        // 🎵 قائمة الأغاني بالامتدادات والأسماء الصحيحة
         // =========================================================================
         const weddingSongs = [
             "audio/1.m4a",
@@ -593,12 +608,13 @@
         ];
 
         // =========================================================================
-        // ⚙️ إعدادات التحكم في حجم التكبير والبلور
+        // ⚙️ إعدادات التحكم في حجم التكبير والبلور وتوقيت السلايدر
         // =========================================================================
         const ACTIVE_PHOTO_SCALE = 1.18;
         const NORMAL_PHOTO_SCALE = 0.88;
         const SIDE_PHOTO_BLUR = 3;
         const SIDE_PHOTO_OPACITY = 0.65;
+        const GALLERY_AUTO_SLIDE_INTERVAL = 1400; // تقليب الصور كل 1.4 ثانية تلقائياً
         // =========================================================================
 
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyEMaKeeYO4m_56qmlQPSkSHWBbAo06MdLWxCijxRBWnOr4eUKHiReTBQdwRo6YN1i_/exec";
@@ -622,6 +638,8 @@
         let resumeScrollTimer = null;
         let animationFrameId = null;
         let galleryReached = false;
+        let gallerySliderTimer = null;
+        let userInteractedWithGallery = false;
 
         // دالة اختيار أغنية عشوائية وتجهيزها
         function pickRandomSong() {
@@ -643,10 +661,8 @@
             });
         }
 
-        // اختيار أغنية فورية عند فتح الصفحة
         audio.src = pickRandomSong();
 
-        // تشغيل أغنية جديدة عشوائياً عند انتهاء الحالية
         audio.addEventListener('ended', () => {
             if (userWantsMusic) {
                 audio.src = pickRandomSong();
@@ -708,12 +724,17 @@
             }
         }
 
-        // إيقاف السكرول التلقائي فور الوصول لقسم الصور
-        function checkGalleryInView() {
+        // =========================================================================
+        // 2. التحقق من توسيط قسم الصور تماماً في منتصف الشاشة
+        // =========================================================================
+        function isGalleryCentered() {
             if (!gallerySection) return false;
             const rect = gallerySection.getBoundingClientRect();
-            const winH = window.innerHeight;
-            return (rect.top <= winH * 0.55 && rect.bottom >= winH * 0.45);
+            const galleryCenter = rect.top + (rect.height / 2);
+            const windowCenter = window.innerHeight / 2;
+
+            // عندما يكون منتصف قسم الصور متطابقاً مع منتصف الشاشة (بفارق 8 بكسل كحد أقصى)
+            return Math.abs(galleryCenter - windowCenter) <= 8;
         }
 
         // الضغط على الختم وبدء التجربة
@@ -731,7 +752,7 @@
             }, 3800);
         });
 
-        // دوال التمرير التلقائي
+        // دوال التمرير التلقائي للصفحة
         function startAutoScroll() {
             if (isAutoScrolling || galleryReached) return;
             isAutoScrolling = true;
@@ -740,9 +761,11 @@
             function scrollStep(currentTimestamp) {
                 if (!isAutoScrolling) return;
 
-                if (checkGalleryInView()) {
+                // التوقف عندما تتوسط الصور الشاشة تماماً
+                if (isGalleryCentered()) {
                     isAutoScrolling = false;
                     galleryReached = true;
+                    startGalleryAutoSlide(); // بدء تقليب الصور تلقائياً بعد الوقوف
                     return;
                 }
 
@@ -834,7 +857,7 @@
         }
 
         // =========================================================================
-        // 📸 نظام تفاعل الصور التلقائي (Cover Flow & Interactive Focus)
+        // 📸 نظام تفاعل الصور التلقائي + التقليب التلقائي بعد التوقف
         // =========================================================================
         function updateGalleryFocus() {
             if (!gallerySection || !infiniteGallery) return;
@@ -891,6 +914,29 @@
             });
         }
 
+        // دالة تحريك السلايدر خطوة للأمام
+        function stepGallerySlide() {
+            if (!infiniteGallery || userInteractedWithGallery) return;
+            const cards = infiniteGallery.querySelectorAll('.photo-card');
+            if (!cards.length) return;
+
+            const cardWidth = cards[0].offsetWidth + 24;
+            infiniteGallery.scrollBy({ left: cardWidth, behavior: 'smooth' });
+        }
+
+        function startGalleryAutoSlide() {
+            if (gallerySliderTimer || userInteractedWithGallery) return;
+            gallerySliderTimer = setInterval(stepGallerySlide, GALLERY_AUTO_SLIDE_INTERVAL);
+        }
+
+        function stopGalleryAutoSlide() {
+            userInteractedWithGallery = true;
+            if (gallerySliderTimer) {
+                clearInterval(gallerySliderTimer);
+                gallerySliderTimer = null;
+            }
+        }
+
         if (infiniteGallery) {
             const items = Array.from(infiniteGallery.children);
             for (let i = 0; i < 2; i++) {
@@ -915,6 +961,11 @@
                 updateGalleryFocus();
             }, {
                 passive: true
+            });
+
+            // إيقاف التقليب التلقائي فور لمس أو تحريك الصور يدوياً
+            ['touchstart', 'touchmove', 'mousedown', 'wheel'].forEach(evt => {
+                infiniteGallery.addEventListener(evt, stopGalleryAutoSlide, { passive: true });
             });
         }
 
