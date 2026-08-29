@@ -138,8 +138,8 @@
 
 <body class="min-h-full bg-luxury-bg text-luxury-dark antialiased overflow-x-hidden pb-28 selection:bg-gold-400 selection:text-white">
 
-    <!-- مشغل أغنية 3 دقات الخفي -->
-    <audio id="weddingAudio" src="https://files.catbox.moe/5ma570.m4a" preload="auto" loop></audio>
+    <!-- مشغل الصوت الخفيف (يتم حقن الأغنية العشوائية المختارة فقط بداخله) -->
+    <audio id="weddingAudio" preload="auto"></audio>
 
     <!-- 1. شاشة الختم الافتتاحية -->
     <div id="envelopeOverlay" class="fixed inset-0 z-[100] overflow-hidden flex items-center justify-center bg-[#eef9ff]">
@@ -548,9 +548,10 @@
                 <span class="text-[10px] font-bold">تواصل</span>
             </a>
 
+            <!-- زر التحكم بالموسيقى التفاعلي -->
             <button id="musicDockBtn" type="button" class="flex flex-col items-center gap-0.5 text-luxury-lightBrown hover:text-gold-600 transition cursor-pointer">
                 <i id="musicDockIcon" data-lucide="volume-2" class="w-4 h-4 text-gold-600"></i>
-                <span class="text-[10px] font-bold text-gold-600">3 دقات</span>
+                <span id="musicDockText" class="text-[10px] font-bold text-gold-600">إيقاف الأغنية</span>
             </button>
 
             <a href="#gallery" class="flex flex-col items-center gap-0.5 text-luxury-lightBrown hover:text-gold-600 transition">
@@ -573,12 +574,25 @@
     <!-- السكربت والتفاعلات بالكامل -->
     <script>
         // =========================================================================
-        // ⚙️ إعدادات التحكم في حجم التكبير والبلور (عدل القيم هنا بكل سهولة)
+        // 🎵 قائمة الأغاني المرفوعة على GitHub (اختيار عشوائي خفيف وفوري)
         // =========================================================================
-        const ACTIVE_PHOTO_SCALE = 1.18; // حجم الصورة التي في المنتصف (1.18 يعني تكبير بنسبة 18%)
-        const NORMAL_PHOTO_SCALE = 0.88; // حجم باقي الصور الجانبية (0.88 يعني تصغير خفيف)
-        const SIDE_PHOTO_BLUR = 3; // درجة بلور الصور الجانبية بالبيكسل (3px)
-        const SIDE_PHOTO_OPACITY = 0.65; // شفافية الصور الجانبية (0.65)
+        const weddingSongs = [
+            "audio/AudioCutter_Amr_Diab_Baba_Official_Lyric_Video_كلمات_عمرو_دياب_باباMP3.mp3",
+            "audio/AudioSplit_2023جديد 2023_حسين_الجسمي_زفه_سمو_بسم_الله_عليها_زفات_2023.mp3",
+            "audio/Abu_Ft_Yousra_3_Daqat_Official_Music_Video_أبو_و_يسرا_ثلاث_دقاتM4A.m4a",
+            "audio/AudioSplit_Mahmoud_El_Esseily_El_Leila_محمود_العسيلي_الليلهM4A_128K.mp3",
+            "audio/AudioSplit_Wael_Jassar_Koul_Waad_Official_Video_Clip_وائل_جسار_كل_وعد.mp3",
+            "audio/Titanic • My Heart Will Go On • Celine Dion(M4A_128K).m4a",
+            "audio/شيرين_يا_ليلة_بيضا_حصرياً_2025_زفة_النسخه_الاصليه_sherine_Ya_Lela.m4a"
+        ];
+
+        // =========================================================================
+        // ⚙️ إعدادات التحكم في حجم التكبير والبلور
+        // =========================================================================
+        const ACTIVE_PHOTO_SCALE = 1.18;
+        const NORMAL_PHOTO_SCALE = 0.88;
+        const SIDE_PHOTO_BLUR = 3;
+        const SIDE_PHOTO_OPACITY = 0.65;
         // =========================================================================
 
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyEMaKeeYO4m_56qmlQPSkSHWBbAo06MdLWxCijxRBWnOr4eUKHiReTBQdwRo6YN1i_/exec";
@@ -590,6 +604,7 @@
         const audio = document.getElementById('weddingAudio');
         const musicDockBtn = document.getElementById('musicDockBtn');
         const musicDockIcon = document.getElementById('musicDockIcon');
+        const musicDockText = document.getElementById('musicDockText');
         const quranSection = document.getElementById('quran-section');
         const gallerySection = document.getElementById('gallery');
         const infiniteGallery = document.getElementById('infiniteGallery');
@@ -602,14 +617,35 @@
         let animationFrameId = null;
         let galleryReached = false;
 
-        // تشغيل / إيقاف الصوت
+        // دالة اختيار أغنية عشوائية واحدة فقط وبدء تحميل أول ثوانٍ منها فوراً
+        function setRandomSong() {
+            if (!weddingSongs.length) return;
+            const randomIndex = Math.floor(Math.random() * weddingSongs.length);
+            audio.src = weddingSongs[randomIndex];
+            audio.load(); // بث مباشر فوري للأغنية المختارة فقط
+        }
+
+        // اختيار أغنية فور فتح الصفحة
+        setRandomSong();
+
+        // عند انتهاء الأغنية يتم اختيار أغنية جديدة عشوائياً
+        audio.addEventListener('ended', () => {
+            if (userWantsMusic) {
+                setRandomSong();
+                audio.play().catch(e => console.log(e));
+            }
+        });
+
+        // تحديث نص وأيقونة زر الصوت
         function updateAudioUI(isPlaying) {
             if (isPlaying) {
                 musicDockIcon.setAttribute('data-lucide', 'volume-2');
                 musicDockIcon.classList.add('text-gold-600', 'animate-pulse');
+                if (musicDockText) musicDockText.innerText = "إيقاف الأغنية";
             } else {
                 musicDockIcon.setAttribute('data-lucide', 'volume-x');
                 musicDockIcon.classList.remove('text-gold-600', 'animate-pulse');
+                if (musicDockText) musicDockText.innerText = "تشغيل الأغنية";
             }
             lucide.createIcons();
         }
@@ -654,13 +690,11 @@
             }
         }
 
-        // إيقاف السكرول التلقائي نهائياً فور الوصول لقسم الصور
+        // إيقاف السكرول التلقائي فور الوصول لقسم الصور
         function checkGalleryInView() {
             if (!gallerySection) return false;
             const rect = gallerySection.getBoundingClientRect();
             const winH = window.innerHeight;
-
-            // هل قسم الصور ظاهر في المنتصف؟
             return (rect.top <= winH * 0.55 && rect.bottom >= winH * 0.45);
         }
 
@@ -692,7 +726,6 @@
             function scrollStep(currentTimestamp) {
                 if (!isAutoScrolling) return;
 
-                // التوقف إذا وصلنا لقسم الصور
                 if (checkGalleryInView()) {
                     isAutoScrolling = false;
                     galleryReached = true;
@@ -722,7 +755,7 @@
         }
 
         function triggerResumeTimer() {
-            if (galleryReached) return; // لا يستأنف إذا وصل للصور
+            if (galleryReached) return;
             clearTimeout(resumeScrollTimer);
             resumeScrollTimer = setTimeout(() => {
                 autoScrollSpeed = 45;
@@ -799,7 +832,6 @@
             const cards = infiniteGallery.querySelectorAll('.photo-card');
             if (!cards.length) return;
 
-            // إذا ابتعد المستخدم بالسكرول الرأسي عن قسم الصور، تعود الصور كلها لطبيعتها
             if (!isGalleryVisible) {
                 cards.forEach(card => {
                     card.style.transform = `scale(1)`;
@@ -811,7 +843,6 @@
                 return;
             }
 
-            // حساب منتصف شريط التمرير الأفقي
             const containerRect = infiniteGallery.getBoundingClientRect();
             const containerCenter = containerRect.left + (containerRect.width / 2);
 
@@ -829,7 +860,6 @@
                 }
             });
 
-            // تطبيق التكبير والبلور على الصور بناءً على موقعها
             cards.forEach(card => {
                 if (card === closestCard) {
                     card.style.transform = `scale(${ACTIVE_PHOTO_SCALE})`;
@@ -847,7 +877,6 @@
             });
         }
 
-        // تفعيل السكرول الأفقي اللانهائي ومراقبة الحركة
         if (infiniteGallery) {
             const items = Array.from(infiniteGallery.children);
             for (let i = 0; i < 2; i++) {
