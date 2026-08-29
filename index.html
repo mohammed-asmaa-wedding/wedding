@@ -138,7 +138,7 @@
 
 <body class="min-h-full bg-luxury-bg text-luxury-dark antialiased overflow-x-hidden pb-28 selection:bg-gold-400 selection:text-white">
 
-    <!-- مشغل الصوت الخفيف (يتم حقن الأغنية العشوائية المختارة فقط بداخله) -->
+    <!-- مشغل الصوت (تحميل فوري للأغنية المختارة فقط) -->
     <audio id="weddingAudio" preload="auto"></audio>
 
     <!-- 1. شاشة الختم الافتتاحية -->
@@ -548,7 +548,7 @@
                 <span class="text-[10px] font-bold">تواصل</span>
             </a>
 
-            <!-- زر التحكم بالموسيقى التفاعلي -->
+            <!-- زر التحكم بالموسيقى -->
             <button id="musicDockBtn" type="button" class="flex flex-col items-center gap-0.5 text-luxury-lightBrown hover:text-gold-600 transition cursor-pointer">
                 <i id="musicDockIcon" data-lucide="volume-2" class="w-4 h-4 text-gold-600"></i>
                 <span id="musicDockText" class="text-[10px] font-bold text-gold-600">إيقاف الأغنية</span>
@@ -574,16 +574,16 @@
     <!-- السكربت والتفاعلات بالكامل -->
     <script>
         // =========================================================================
-        // 🎵 قائمة الأغاني المرفوعة على GitHub (اختيار عشوائي خفيف وفوري)
+        // 🎵 قائمة الأغاني بالأسماء الموحدة على GitHub
         // =========================================================================
         const weddingSongs = [
-            "audio/AudioCutter_Amr_Diab_Baba_Official_Lyric_Video_كلمات_عمرو_دياب_باباMP3.mp3",
-            "audio/AudioSplit_2023جديد 2023_حسين_الجسمي_زفه_سمو_بسم_الله_عليها_زفات_2023.mp3",
-            "audio/Abu_Ft_Yousra_3_Daqat_Official_Music_Video_أبو_و_يسرا_ثلاث_دقاتM4A.m4a",
-            "audio/AudioSplit_Mahmoud_El_Esseily_El_Leila_محمود_العسيلي_الليلهM4A_128K.mp3",
-            "audio/AudioSplit_Wael_Jassar_Koul_Waad_Official_Video_Clip_وائل_جسار_كل_وعد.mp3",
-            "audio/Titanic • My Heart Will Go On • Celine Dion(M4A_128K).m4a",
-            "audio/شيرين_يا_ليلة_بيضا_حصرياً_2025_زفة_النسخه_الاصليه_sherine_Ya_Lela.m4a"
+            "audio/song1.mp3",
+            "audio/song2.mp3",
+            "audio/song3.mp3",
+            "audio/song4.mp3",
+            "audio/song5.mp3",
+            "audio/song6.mp3",
+            "audio/song7.mp3"
         ];
 
         // =========================================================================
@@ -617,15 +617,15 @@
         let animationFrameId = null;
         let galleryReached = false;
 
-        // دالة اختيار أغنية عشوائية واحدة فقط وبدء تحميل أول ثوانٍ منها فوراً
+        // دالة اختيار أغنية عشوائية واحدة وتحميل أول ثوانٍ منها فوراً
         function setRandomSong() {
             if (!weddingSongs.length) return;
             const randomIndex = Math.floor(Math.random() * weddingSongs.length);
             audio.src = weddingSongs[randomIndex];
-            audio.load(); // بث مباشر فوري للأغنية المختارة فقط
+            audio.load();
         }
 
-        // اختيار أغنية فور فتح الصفحة
+        // اختيار أغنية فورية عند تشغيل الموقع
         setRandomSong();
 
         // عند انتهاء الأغنية يتم اختيار أغنية جديدة عشوائياً
@@ -636,7 +636,7 @@
             }
         });
 
-        // تحديث نص وأيقونة زر الصوت
+        // تحديث واجهة زر الصوت
         function updateAudioUI(isPlaying) {
             if (isPlaying) {
                 musicDockIcon.setAttribute('data-lucide', 'volume-2');
