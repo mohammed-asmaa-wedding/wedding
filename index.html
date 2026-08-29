@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
     <title>دعوة زفاف | محمد &amp; أسماء</title>
 
+    <!-- بيانات المشاركة للمعاينة (WhatsApp / Facebook) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="دعوة زفاف | محمد &amp; أسماء" />
+    <meta property="og:description" content="يتشرف محمد &amp; أسماء بدعوتكم لحضور حفل زفافهما المبارك. اضغطوا هنا لمشاهدة تفاصيل وموقع الحفل." />
+    <meta property="og:image" content="https://mohammed-asmaa-wedding.github.io/wedding/images/photo_6_2026-08-29_15-23-19.jpg" />
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -127,7 +133,7 @@
             transform: translateY(0) scale(1);
             filter: blur(0px);
         }
-        /* انتقال ناعم جداً لبطاقات الصور أثناء التكبير والبلور */
+        /* انتقال ناعم لبطاقات الصور */
         
         .photo-card {
             transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), filter 0.45s ease, opacity 0.45s ease, box-shadow 0.45s ease;
@@ -138,7 +144,7 @@
 
 <body class="min-h-full bg-luxury-bg text-luxury-dark antialiased overflow-x-hidden pb-28 selection:bg-gold-400 selection:text-white">
 
-    <!-- مشغل الصوت (تحميل فوري للأغنية المختارة فقط) -->
+    <!-- مشغل الصوت الخفيف -->
     <audio id="weddingAudio" preload="auto"></audio>
 
     <!-- 1. شاشة الختم الافتتاحية -->
@@ -574,16 +580,16 @@
     <!-- السكربت والتفاعلات بالكامل -->
     <script>
         // =========================================================================
-        // 🎵 قائمة الأغاني بالأسماء الموحدة على GitHub
+        // 🎵 قائمة الأغاني بالامتدادات والأسماء الصحيحة والمطابقة لـ GitHub
         // =========================================================================
         const weddingSongs = [
-            "audio/song1.mp3",
-            "audio/song2.mp3",
-            "audio/song3.mp3",
-            "audio/song4.mp3",
-            "audio/song5.mp3",
-            "audio/song6.mp3",
-            "audio/song7.mp3"
+            "audio/1.m4a",
+            "audio/2.mp3",
+            "audio/3.mp3",
+            "audio/4.m4a",
+            "audio/5.m4a",
+            "audio/6.mp3",
+            "audio/7.mp3"
         ];
 
         // =========================================================================
@@ -617,21 +623,33 @@
         let animationFrameId = null;
         let galleryReached = false;
 
-        // دالة اختيار أغنية عشوائية واحدة وتحميل أول ثوانٍ منها فوراً
-        function setRandomSong() {
-            if (!weddingSongs.length) return;
+        // دالة اختيار أغنية عشوائية وتجهيزها
+        function pickRandomSong() {
+            if (!weddingSongs.length) return "";
             const randomIndex = Math.floor(Math.random() * weddingSongs.length);
-            audio.src = weddingSongs[randomIndex];
-            audio.load();
+            return weddingSongs[randomIndex];
         }
 
-        // اختيار أغنية فورية عند تشغيل الموقع
-        setRandomSong();
+        function playSelectedAudio() {
+            if (!audio.src || audio.src === "" || audio.src === window.location.href) {
+                audio.src = pickRandomSong();
+            }
+            audio.play().then(() => {
+                updateAudioUI(true);
+            }).catch(err => {
+                console.log("Audio play error, retrying...", err);
+                audio.src = pickRandomSong();
+                audio.play().then(() => updateAudioUI(true)).catch(e => console.log("Blocked:", e));
+            });
+        }
 
-        // عند انتهاء الأغنية يتم اختيار أغنية جديدة عشوائياً
+        // اختيار أغنية فورية عند فتح الصفحة
+        audio.src = pickRandomSong();
+
+        // تشغيل أغنية جديدة عشوائياً عند انتهاء الحالية
         audio.addEventListener('ended', () => {
             if (userWantsMusic) {
-                setRandomSong();
+                audio.src = pickRandomSong();
                 audio.play().catch(e => console.log(e));
             }
         });
@@ -658,7 +676,7 @@
             } else {
                 userWantsMusic = true;
                 if (!isQuranMuted) {
-                    audio.play().then(() => updateAudioUI(true)).catch(e => console.log(e));
+                    playSelectedAudio();
                 }
             }
         }
@@ -705,11 +723,7 @@
             if (bgVideo) bgVideo.play().catch(e => console.log(e));
 
             userWantsMusic = true;
-            audio.play().then(() => {
-                updateAudioUI(true);
-            }).catch(e => {
-                console.log('Audio autoplay blocked:', e);
-            });
+            playSelectedAudio();
 
             setTimeout(() => {
                 autoScrollSpeed = 75;
